@@ -26,6 +26,10 @@ app.use("/api/books", bookRoutes);
 const contactRoutes = require("./routes/contactRoutes");
 app.use("/api", contactRoutes);
 
+app.get("/", (req, res) => {
+  return res.status(200).json({ message: "API is running" });
+});
+
 const PORT = process.env.PORT || 5000;
 
 mongoose
@@ -33,7 +37,7 @@ mongoose
     "mongodb+srv://e23sasavulic:sasavulic123@bookblogcluster.odtgx.mongodb.net/?retryWrites=true&w=majority&appName=BookBlogCluster"
   )
   .then(() => {
-    console.log("Connected to MongoDB");
+    // console.log("Connected to MongoDB");
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
   .catch((err) => console.log(err));
