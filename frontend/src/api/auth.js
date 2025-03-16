@@ -1,6 +1,5 @@
 import API from "./index";
 
-// Postojeće funkcije
 export const login = async (email, password) => {
   const response = await API.post("/auth/login", { email, password });
   return response.data;
@@ -15,7 +14,6 @@ export const register = async (username, email, password) => {
   return response.data;
 };
 
-// Nove funkcije za rad sa profilom
 export const getUserProfile = async () => {
   const token = localStorage.getItem("token");
   const response = await API.get("/auth/profile", {
@@ -56,6 +54,8 @@ export const deleteAccount = async () => {
   return response.data;
 };
 
+// Primetio sam da postoji deleteBook funkcija i u books.js i u auth.js
+// Ostavljam je ovde jer je možda koristiš iz oba fajla, ali razmisli o uklanjanju duplikata
 export const deleteBook = async (bookId) => {
   const token = localStorage.getItem("token");
   const response = await API.delete(`/books/${bookId}`, {
@@ -66,6 +66,7 @@ export const deleteBook = async (bookId) => {
   return response.data;
 };
 
+// Takođe postoji deleteReview funkcija u oba fajla
 export const deleteReview = async (reviewId) => {
   const token = localStorage.getItem("token");
   const response = await API.delete(`/books/review/${reviewId}`, {
