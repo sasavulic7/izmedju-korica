@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api"
+  baseURL: "https://izmedju-korica.vercel.app/api"
 });
 
 // Interceptor za dodavanje tokena u zahteve
