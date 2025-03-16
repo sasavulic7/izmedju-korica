@@ -1,18 +1,22 @@
 import API from "./index";
 
+// Base URL for the deployed backend
+const BASE_URL = "https://izmedju-korica.vercel.app";
+
+// Updated API functions for Vercel deployment
 export const getAllBooks = async () => {
-  const response = await API.get("/books");
+  const response = await API.get(`${BASE_URL}/books`);
   return response.data;
 };
 
 export const getBookById = async (id) => {
-  const response = await API.get(`/books/${id}`);
+  const response = await API.get(`${BASE_URL}/books/${id}`);
   return response.data;
 };
 
 export const createBook = async (bookData) => {
   const token = localStorage.getItem("token");
-  const response = await API.post("/books", bookData, {
+  const response = await API.post(`${BASE_URL}/books`, bookData, {
     headers: {
       "x-auth-token": token
     }
@@ -22,7 +26,7 @@ export const createBook = async (bookData) => {
 
 export const deleteBook = async (bookId) => {
   const token = localStorage.getItem("token");
-  const response = await API.delete(`/books/${bookId}`, {
+  const response = await API.delete(`${BASE_URL}/books/${bookId}`, {
     headers: {
       "x-auth-token": token
     }
@@ -32,7 +36,7 @@ export const deleteBook = async (bookId) => {
 
 export const addReview = async (bookId, reviewData) => {
   const token = localStorage.getItem("token");
-  const response = await API.post(`/books/${bookId}/review`, reviewData, {
+  const response = await API.post(`${BASE_URL}/books/${bookId}/review`, reviewData, {
     headers: {
       "x-auth-token": token
     }
@@ -42,7 +46,7 @@ export const addReview = async (bookId, reviewData) => {
 
 export const deleteReview = async (reviewId) => {
   const token = localStorage.getItem("token");
-  const response = await API.delete(`/books/review/${reviewId}`, {
+  const response = await API.delete(`${BASE_URL}/books/review/${reviewId}`, {
     headers: {
       "x-auth-token": token
     }
