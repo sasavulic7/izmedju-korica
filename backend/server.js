@@ -10,7 +10,7 @@ const app = express();
 // Ispravljena CORS konfiguracija
 app.use(
   cors({
-    origin: "http://localhost:5173", // Vaš frontend origin
+    origin: process.env.DOMAIN, // Vaš frontend origin
     credentials: true
   })
 );
