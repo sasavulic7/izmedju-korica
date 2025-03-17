@@ -49,13 +49,22 @@ router.get("/", async (req, res) => {
 });
 
 // GET /api/books/:id - Jedna knjiga
+router.get("/", async (req, res) => {
+  try {
+    const books = await Book.find()
+      .populate("reviews.user", "username")
+      .populate("user", "username")
+      .sort({ createdAt: -1 });
+
+    res.json(books);
+  } catch (error) {
+    res.status(500).json({ message: "Greška pri dohvatanju knjiga", error: error.message });
+  }
+});
+
 router.get("/:id", async (req, res) => {
   try {
-    console.log("Primljen zahtev za knjigu sa ID-em:", req.params.id);
-
-    // Provera validnosti ID-a
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      console.log("ID nije validan MongoDB ObjectId");
       return res.status(400).json({ message: "Nevažeći ID format" });
     }
 
@@ -68,22 +77,15 @@ router.get("/:id", async (req, res) => {
           select: "username"
         }
       })
-      .populate("user", "username"); // Dodajemo informacije o korisniku koji je kreirao knjigu
+      .populate("user", "username");
 
-    console.log(
-      "Rezultat pretrage:",
-      book ? "Knjiga pronađena" : "Knjiga nije pronađena"
-    );
-
-    if (!book)
+    if (!book) {
       return res.status(404).json({ message: "Knjiga nije pronađena" });
+    }
 
     res.json(book);
   } catch (error) {
-    console.error("Greška prilikom traženja knjige:", error);
-    res
-      .status(500)
-      .json({ message: "Greška na serveru", error: error.message });
+    res.status(500).json({ message: "Greška na serveru", error: error.message });
   }
 });
 
