@@ -5,37 +5,58 @@ const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    message: ""
+    message: "",
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [status, setStatus] = useState(null);
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [status, setStatus] = useState(""); // Status poruka
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.name) newErrors.name = "Ime je obavezno.";
+    if (!formData.email) {
+      newErrors.email = "Email je obavezan.";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Unesite validan email.";
+    }
+    if (!formData.message) newErrors.message = "Poruka je obavezna.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setIsSubmitting(true);
-  setStatus(null);
+    e.preventDefault();
+    if (validateForm()) {
+      try {
+        const response = await axios.post(
+          "https://izmedju-korica.vercel.app/api/contact", // Backend endpoint
+          formData
+        );
 
-  try {
-    const response = await axios.post(
-      "https://izmedju-korica.vercel.app/api/contact", // 
-      formData
-    );
-    if (response.data.success) {
-      setStatus("Uspešno poslato!");
-      setFormData({ name: "", email: "", message: "" });
-    } else {
-      setStatus("Greška pri slanju, pokušajte ponovo.");
+        if (response.data.success) {
+          setStatus("Poruka je uspešno poslata!");
+          setFormData({ name: "", email: "", message: "" }); // Resetovanje forme
+        } else {
+          setStatus("Došlo je do greške prilikom slanja poruke.");
+        }
+      } catch (error) {
+        console.error("Greška:", error);
+        setStatus("Greška prilikom slanja poruke.");
+      }
     }
-  } catch (error) {
-    setStatus("Greška pri slanju, pokušajte ponovo.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
   return (
     <div className="bg-[#f5e6ca] min-h-screen flex items-center justify-center p-6">
@@ -44,43 +65,55 @@ const ContactPage = () => {
           Kontaktirajte nas
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="name"
-            placeholder="Vaše ime"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6b4226]"
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Vaš email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6b4226]"
-            required
-          />
-          <textarea
-            name="message"
-            rows="4"
-            placeholder="Vaša poruka"
-            value={formData.message}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6b4226]"
-            required
-          ></textarea>
+          <div>
+            <label htmlFor="name" className="block text-gray-700">
+              Ime
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6b4226]"
+            />
+            {errors.name && <p className="text-red-500">{errors.name}</p>}
+          </div>
+          <div>
+            <label htmlFor="email" className="block text-gray-700">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6b4226]"
+            />
+            {errors.email && <p className="text-red-500">{errors.email}</p>}
+          </div>
+          <div>
+            <label htmlFor="message" className="block text-gray-700">
+              Poruka
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows="4"
+              value={formData.message}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6b4226]"
+            />
+            {errors.message && <p className="text-red-500">{errors.message}</p>}
+          </div>
           <button
             type="submit"
-            className="cursor-pointer w-full bg-[#6b4226] text-white py-3 rounded-lg hover:bg-[#4e2f1f] transition"
-            disabled={isSubmitting}
+            className="w-full bg-[#6b4226] text-white py-3 rounded-lg hover:bg-[#4e2f1f] transition"
           >
-            {isSubmitting ? "Šalje se..." : "Pošalji"}
+            Pošalji
           </button>
-          {status && (
-            <p className="text-center text-[#6b4226] mt-4">{status}</p>
-          )}
+          {status && <p className="text-center text-[#6b4226] mt-4">{status}</p>}
         </form>
       </div>
     </div>
