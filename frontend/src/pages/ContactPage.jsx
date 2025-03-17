@@ -15,27 +15,27 @@ const ContactPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setStatus(null);
+  e.preventDefault();
+  setIsSubmitting(true);
+  setStatus(null);
 
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/contact",
-        formData
-      );
-      if (response.data.success) {
-        setStatus("Uspešno poslato!");
-        setFormData({ name: "", email: "", message: "" });
-      } else {
-        setStatus("Greška pri slanju, pokušajte ponovo.");
-      }
-    } catch (error) {
+  try {
+    const response = await axios.post(
+      "https://izmedju-korica.vercel.app/api/contact", // 
+      formData
+    );
+    if (response.data.success) {
+      setStatus("Uspešno poslato!");
+      setFormData({ name: "", email: "", message: "" });
+    } else {
       setStatus("Greška pri slanju, pokušajte ponovo.");
-    } finally {
-      setIsSubmitting(false);
     }
-  };
+  } catch (error) {
+    setStatus("Greška pri slanju, pokušajte ponovo.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="bg-[#f5e6ca] min-h-screen flex items-center justify-center p-6">
