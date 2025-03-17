@@ -2,7 +2,7 @@ const express = require("express");
 const nodemailer = require("nodemailer");
 const router = express.Router();
 
-dotenv = require("dotenv").config();
+require("dotenv").config(); // Učitaj .env fajl
 
 router.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
@@ -17,16 +17,16 @@ router.post("/contact", async (req, res) => {
     let transporter = nodemailer.createTransport({
       service: "gmail", // Možeš koristiti i drugi email provajder
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
+        user: process.env.EMAIL_USER, // Proveri da li je ovo pravilno postavljeno u .env
+        pass: process.env.EMAIL_PASS, // Proveri da li je ovo pravilno postavljeno u .env
+      },
     });
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_RECEIVER, // Tvoj e-mail gde će stizati poruke
       subject: `Poruka sa kontakt forme od ${name}`,
-      text: `Ime: ${name}\nEmail: ${email}\nPoruka: ${message}`
+      text: `Ime: ${name}\nEmail: ${email}\nPoruka: ${message}`,
     });
 
     res.json({ success: true, message: "Poruka je uspešno poslata." });
