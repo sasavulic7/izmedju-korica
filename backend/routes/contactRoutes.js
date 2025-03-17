@@ -4,6 +4,15 @@ const router = express.Router();
 
 require("dotenv").config(); // Učitaj .env fajl
 
+// SMTP konfiguracija za Gmail
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER, // Tvoj Gmail nalog
+    pass: process.env.EMAIL_PASS, // Tvoj App Password
+  },
+});
+
 router.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
 
@@ -14,32 +23,23 @@ router.post("/contact", async (req, res) => {
   }
 
   try {
-    let transporter = nodemailer.createTransport({
-      service: "gmail", // Možeš koristiti i drugi email provajder
-      auth: {
-        user: process.env.EMAIL_USER, // Proveri da li je ovo pravilno postavljeno u .env
-        pass: process.env.EMAIL_PASS, // Proveri da li je ovo pravilno postavljeno u .env
-      },
-    });
+    // Opcije za email
+    const mailOptions = {
+      from: email, // Email korisnika koji šalje poruku
+      to: process.env.EMAIL_USER, // Tvoj email na koji ćeš primati poruke
+      subject: `Kontakt forma - poruka od ${name}`,
+      text: `Ime: ${name}\nEmail: ${email}\nPoruka:\n${message}`,
+    };
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_RECEIVER, // Tvoj e-mail gde će stizati poruke
-      subject: `Poruka sa kontakt forme od ${name}`,
-      text: `Ime: ${name}\nEmail: ${email}\nPoruka: ${message}`,
-    });
-
-    res.json({ success: true, message: "Poruka je uspešno poslata." });
+    // Slanje emaila
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ success: true, message: "Poruka je uspešno poslata!" });
   } catch (error) {
-    console.error(error);
+    console.error("Greška pri slanju email-a:", error);
     res
       .status(500)
       .json({ success: false, message: "Greška pri slanju poruke." });
   }
 });
-
-console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
-console.log("EMAIL_RECEIVER:", process.env.EMAIL_RECEIVER);
 
 module.exports = router;
