@@ -1,7 +1,7 @@
 import API from "./index";
 
 // Base URL for the deployed backend
-const BASE_URL = "https://izmedju-korica.vercel.app";
+const BASE_URL = "https://izmedju-korica.vercel.app/api/books";
 
 // Updated API functions for Vercel deployment
 export const getAllBooks = async () => {
