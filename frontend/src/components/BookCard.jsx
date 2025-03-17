@@ -19,7 +19,7 @@ const BookCard = ({ book }) => {
         <p className="text-gray-600 mb-4 line-clamp-3">{book.description}</p>
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-500">
-            {book.reviews?.length || 0} komantar
+            {book.reviews?.length || 0} komentara
           </span>
           <Link
             to={`/books/${book._id}`}
