@@ -38,4 +38,8 @@ router.post("/contact", async (req, res) => {
   }
 });
 
+console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
+console.log("EMAIL_RECEIVER:", process.env.EMAIL_RECEIVER);
+
 module.exports = router;
