@@ -10,8 +10,21 @@ const app = express();
 // Ispravljena CORS konfiguracija
 app.use(
   cors({
-    origin: process.env.DOMAIN, // Vaš frontend origin
-    credentials: true
+    origin: (origin, callback) => {
+      // Dozvoli zahteve sa frontenda (sa ili bez kose crte)
+      const allowedOrigins = [
+        "https://izmedju-korica-frontend.vercel.app",
+        "https://izmedju-korica-frontend.vercel.app/", // Dodaj i ovu opciju za svaki slučaj
+        "http://localhost:3000", // Za lokalni razvoj
+      ];
+
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true); // Dozvoli zahtev
+      } else {
+        callback(new Error("Nije dozvoljen pristup sa ovog origin-a")); // Blokiraj zahtev
+      }
+    },
+    credentials: true, // Ako koristiš kolačiće ili autentikaciju
   })
 );
 
